@@ -18,6 +18,8 @@ services:
     container_name: springboot-api
     ports:
       - "8080:8080"
+    volumes:
+      - C:/Users/lucas/OneDrive/Documents/Cours/Examen:/appfolder
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysqldb:3306/ExamenDatabase
       - SPRING_DATASOURCE_USERNAME=user
