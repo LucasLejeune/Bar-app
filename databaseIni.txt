@@ -1,0 +1,129 @@
+CREATE TABLE `ExamenDatabase`.`coctail` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE);
+
+CREATE TABLE `ExamenDatabase`.`category` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE);
+
+CREATE TABLE `ExamenDatabase`.`cocktail_categories` (
+  `cocktail_id` INT NOT NULL,
+  `category_id` INT NOT NULL,
+  PRIMARY KEY (`cocktail_id`, `category_id`),
+  INDEX `fk_category_idx` (`category_id` ASC) VISIBLE,
+  CONSTRAINT `fk_cocktail`
+    FOREIGN KEY (`cocktail_id`)
+    REFERENCES `ExamenDatabase`.`coctail` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_category`
+    FOREIGN KEY (`category_id`)
+    REFERENCES `ExamenDatabase`.`category` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+CREATE TABLE `ExamenDatabase`.`ingredients` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE);
+
+CREATE TABLE `ExamenDatabase`.`cocktail_ingredients` (
+  `cocktail_id` INT NOT NULL,
+  `ingredient_id` INT NOT NULL,
+  PRIMARY KEY (`cocktail_id`, `ingredient_id`),
+  INDEX `fk_ingredient_idx` (`ingredient_id` ASC) VISIBLE,
+  CONSTRAINT `fk_cocktail_ingredients`
+    FOREIGN KEY (`cocktail_id`)
+    REFERENCES `ExamenDatabase`.`coctail` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_ingredient`
+    FOREIGN KEY (`ingredient_id`)
+    REFERENCES `ExamenDatabase`.`ingredients` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+CREATE TABLE `ExamenDatabase`.`barmaker` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NOT NULL,
+  `password` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE);
+
+CREATE TABLE `ExamenDatabase`.`card` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `barmaker_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_barmaker_idx` (`barmaker_id` ASC) VISIBLE,
+  CONSTRAINT `fk_barmaker`
+    FOREIGN KEY (`barmaker_id`)
+    REFERENCES `ExamenDatabase`.`barmaker` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+    UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE;
+
+CREATE TABLE `ExamenDatabase`.`card_cocktail` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `card_id` INT NOT NULL,
+  `cocktail_id` INT NOT NULL,
+  `cocktail_size` CHAR(1) NOT NULL,
+  `cocktail_price` FLOAT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_cocktail_card_idx` (`cocktail_id` ASC) VISIBLE,
+  INDEX `fk_card_cocktail_idx` (`card_id` ASC) VISIBLE,
+  CONSTRAINT `fk_cocktail_card`
+    FOREIGN KEY (`cocktail_id`)
+    REFERENCES `ExamenDatabase`.`coctail` (`id`)
+    FOREIGN KEY (`card_id`)
+    REFERENCES `ExamenDatabase`.`card` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+CREATE TABLE `ExamenDatabase`.`table` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NOT NULL,
+  `card_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
+  INDEX `_idx` (`card_id` ASC) VISIBLE,
+  CONSTRAINT ``
+    FOREIGN KEY (`card_id`)
+    REFERENCES `ExamenDatabase`.`card` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+CREATE TABLE `ExamenDatabase`.`command` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `table_id` INT NOT NULL,
+  `sent_at` DATETIME NULL,
+  `status` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
+  INDEX `fk_table_idx` (`table_id` ASC) VISIBLE,
+  CONSTRAINT `fk_table`
+    FOREIGN KEY (`table_id`)
+    REFERENCES `ExamenDatabase`.`table` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+CREATE TABLE `ExamenDatabase`.`command_cocktails` (
+  `command_id` INT NOT NULL,
+  `cocktail_id` INT NOT NULL,
+  `status` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`command_id`, `cocktail_id`),
+  INDEX `fk_cocktail_command_idx` (`cocktail_id` ASC) VISIBLE,
+  CONSTRAINT `fk_command`
+    FOREIGN KEY (`command_id`)
+    REFERENCES `ExamenDatabase`.`command` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_cocktail_command`
+    FOREIGN KEY (`cocktail_id`)
+    REFERENCES `ExamenDatabase`.`coctail` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
